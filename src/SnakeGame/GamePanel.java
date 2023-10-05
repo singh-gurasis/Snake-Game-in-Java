@@ -11,8 +11,8 @@ import java.util.Random;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
-    ArrayList<Integer> Sx_Length = new ArrayList<>();
-    ArrayList<Integer> Sy_Length = new ArrayList<>();
+    int[] Sx_Length = new int[200];
+    int[] Sy_Length = new int[200];
     private int LengthOfSnake = 3;
 
     int[] xPos = {25,50,75,100,125,150,175,200,225,250,275,300,325,350,375,400,425,450,475,500,
@@ -68,30 +68,30 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         g.fillRect(25,75,850,575);
 
         if(moves == 0){
-            Sx_Length.add(100);
-            Sx_Length.add(75);
-            Sx_Length.add(50);
+            Sx_Length[0] = 100;
+            Sx_Length[1] = 75;
+            Sx_Length[2] = 50;
 
-            Sy_Length.add(100);
-            Sy_Length.add(100);
-            Sy_Length.add(100);
+            Sy_Length[0] = 100;
+            Sy_Length[1] = 100;
+            Sy_Length[2] = 100;
         }
 
         if(left){
-            leftmouth.paintIcon(this, g, Sx_Length.get(0), Sy_Length.get(0));
+            leftmouth.paintIcon(this, g, Sx_Length[0], Sy_Length[0]);
         }
         if(right){
-            rightmouth.paintIcon(this, g, Sx_Length.get(0), Sy_Length.get(0));
+            rightmouth.paintIcon(this, g, Sx_Length[0], Sy_Length[0]);
         }
         if(up){
-            upmouth.paintIcon(this, g, Sx_Length.get(0), Sy_Length.get(0));
+            upmouth.paintIcon(this, g, Sx_Length[0], Sy_Length[0]);
         }
         if(down){
-            downmouth.paintIcon(this, g, Sx_Length.get(0), Sy_Length.get(0));
+            downmouth.paintIcon(this, g, Sx_Length[0], Sy_Length[0]);
         }
 
         for(int i=0; i<LengthOfSnake; i++){
-            snakeimage.paintIcon(this, g, Sx_Length.get(i), Sy_Length.get(i));
+            snakeimage.paintIcon(this, g, Sx_Length[i], Sy_Length[i]);
         }
 
         enemy.paintIcon(this, g, enemyX, enemyY);
@@ -118,41 +118,37 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     public void actionPerformed(ActionEvent e) {
 
         for(int i=LengthOfSnake-1; i>0; i--){
-            int a, b;
-            a = Sx_Length.get(i);b = Sx_Length.get(i-1);
-            a = b;
+            Sx_Length[i] = Sx_Length[i-1];
 
-            int c, d;
-            c = Sy_Length.get(i);d = Sy_Length.get(i-1);
-            c = d;
+            Sy_Length[i] = Sy_Length[i-1];
         }
 
         if(left){
-            int x = Sx_Length.get(0);
+            int x = Sx_Length[0];
             x -= 25;
-            Sx_Length.set(0, x);
+            Sx_Length[0] = x;
         }
         if(right){
-            int x = Sx_Length.get(0);
+            int x = Sx_Length[0];
             x += 25;
-            Sx_Length.set(0, x);
+            Sx_Length[0] = x;
         }
         if(up){
-            int y = Sy_Length.get(0);
+            int y = Sy_Length[0];
             y -= 25;
-            Sy_Length.set(0, y);
+            Sy_Length[0] = y;
         }
         if(down){
-            int y = Sy_Length.get(0);
+            int y = Sy_Length[0];
             y += 25;
-            Sy_Length.set(0, y);
+            Sy_Length[0] = y;
         }
 
-        if(Sx_Length.get(0)>850) Sx_Length.set(0, 25);
-        if(Sx_Length.get(0)<25) Sx_Length.set(0, 850);
+        if(Sx_Length[0]>850) Sx_Length[0] = 25;
+        if(Sx_Length[0]<25) Sx_Length[0] = 850;
 
-        if(Sy_Length.get(0)>625) Sy_Length.set(0, 75);
-        if(Sy_Length.get(0)<75) Sy_Length.set(0, 625);
+        if(Sy_Length[0]>625) Sy_Length[0] = 75;
+        if(Sy_Length[0]<75) Sy_Length[0] = 625;
 
         collidesWithEnemy();
         collidesWithBody();
@@ -168,13 +164,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
         if(e.getKeyCode() == KeyEvent.VK_A && !right){
             left = true;
-            right = false;
             up = false;
             down = false;
             moves++;
         }
         if(e.getKeyCode() == KeyEvent.VK_D && !left){
-            left = false;
             right = true;
             up = false;
             down = false;
@@ -184,13 +178,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             left = false;
             right = false;
             up = true;
-            down = false;
             moves++;
         }
         if(e.getKeyCode() == KeyEvent.VK_S && !up){
             left = false;
             right = false;
-            up = false;
             down = true;
             moves++;
         }
@@ -208,14 +200,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         enemyX = xPos[rnd.nextInt(34)];
         enemyY = yPos[rnd.nextInt(23)];
         for(int i=LengthOfSnake-1; i>=0; i--){
-            if(Sx_Length.get(i) == enemyX && Sy_Length.get(i) == enemyY){
+            if(Sx_Length[i] == enemyX && Sy_Length[i] == enemyY){
                 newEnemy();
             }
         }
     }
 
     private void collidesWithEnemy() {
-        if(Sx_Length.get(0) == enemyX && Sy_Length.get(0) == enemyY){
+        if(Sx_Length[0] == enemyX && Sy_Length[0] == enemyY){
             newEnemy();
             LengthOfSnake++;
             score += 5;
@@ -223,9 +215,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
     private void collidesWithBody(){
         for(int i=LengthOfSnake-1; i>0; i--){
-            if((Sx_Length.get(0) == Sx_Length.get(i)) && (Sy_Length.get(0) == Sy_Length.get(i))){
+            if((Sx_Length[0] == Sx_Length[i]) && (Sy_Length[0] == Sy_Length[i])){
                 timer.stop();
                 gameOver = true;
+                java.awt.Toolkit.getDefaultToolkit().beep();
             }
         }
     }
